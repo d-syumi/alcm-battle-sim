@@ -106,8 +106,8 @@ export const EQUIPMENT_MASTER: EquipmentMaster[] = [
   // weapon
   create('weapon', 'こんぼう', 'F', 11,{ str: 100 }),
   create('weapon', 'アイアンブレード', 'F', 11,{ str: 40, dex: 60 }),
-  create('weapon', 'ウッドハンマー', 'F', 13,{ str: 100 }),
-  create('weapon', 'アイアンバックラー', 'F', 13,{ vit: 100 }),
+  create('weapon', 'ウッドハンマー', 'F', 11,{ str: 100 }),
+  create('weapon', 'アイアンバックラー', 'F', 11,{ vit: 100 }),
   create('weapon', 'ブロンズスピア', 'E', 18,{ str: 83.3, agi: 16.7 }),
   create('weapon', 'シルバーダガー', 'E', 19,{ str: 23.1, agi: 76.9 }),
   create('weapon', 'アイアンモーニングスター', 'E', 18,{ str: 50, luk: 50 }),

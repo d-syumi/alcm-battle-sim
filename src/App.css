@@ -53,3 +53,42 @@ button {
 .log {
   margin-top: 12px;
 }
+
+.equip-row {
+  display: grid;
+  grid-template-columns: 110px minmax(260px, 1fr) 70px 150px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.plus-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.plus-field input {
+  width: 3.2em;
+}
+
+.slot-power {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+  width: 150px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+
+.app, .panel, h1, h2, p, strong, label, .slot-power {
+  color: #e2e8f0;
+}
+
+.notice {
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}

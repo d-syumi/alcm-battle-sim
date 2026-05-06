@@ -80,7 +80,7 @@ const buildInitialEquipment = (): EquippedItem[] => {
   for (const category of categories) {
     const limit = EQUIPMENT_SLOT_LIMIT[category]
     for (let i = 0; i < limit; i += 1) {
-      result.push({ slotId: `${category}-${i + 1}`, category, itemId: '', plus: 0 })
+      result.push({ slotId: `${category}-${i + 1}`, category, itemId: '', plus: category === 'orb' ? 4 : 0 })
     }
   }
   return result
@@ -158,7 +158,7 @@ function App() {
   return <main className="app">
     <h1>あるけみバトルシミュレーター</h1>
     <section className="panel">
-      <h2>装備 (最大7枠)</h2>
+      <h2>装備</h2>
       <p className="notice">装備戦闘力は正確でない場合があります。特に宝珠は少しズレるためご注意ください。</p>
       {equipped.map((slot, i) => {
         const items = slot.category === 'orb'

@@ -24,6 +24,8 @@ type AttackResult = {
   defenderRemainingHp: number
   attackerHitRate: number
   attackerCritRate: number
+  attackRoll: number
+  defenseRoll: number
 }
 
 const DEFAULT_A: Combatant = {
@@ -37,8 +39,9 @@ const DEFAULT_B: Combatant = {
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+const rollRange = (roll: () => number, min: number, max: number) => min + roll() * (max - min)
 
-const physicalDefense = (vit: number) => vit * 0.8
+const physicalDefense = (vit: number, defenseRoll = 1) => vit * defenseRoll
 
 const calcHitRate = (attacker: Status, defender: Status) => {
   const base = 0.83
@@ -66,16 +69,19 @@ const calcNormalAttack = (attacker: Combatant, defender: Combatant, roll = Math.
       defenderRemainingHp: defender.status.hp,
       attackerHitRate: hitRate,
       attackerCritRate: criticalRate,
+      attackRoll: 0,
+      defenseRoll: 0,
     }
   }
 
-  const attackPower = attacker.status.str * 1.9
-  const defense = physicalDefense(defender.status.vit)
-  const randomRange = 0.9 + roll() * 0.2
+  const attackRoll = rollRange(roll, 0.66, 1.0)
+  const defenseRoll = rollRange(roll, 0.5, 1.0)
+  const attackPower = attacker.status.str * attackRoll
+  const defense = physicalDefense(defender.status.vit, defenseRoll)
   const crit = roll() < criticalRate
   const critMultiplier = crit ? 1.5 : 1
-  const rawDamage = (attackPower - defense) * randomRange * critMultiplier
-  const damage = Math.max(1, Math.round(rawDamage))
+  const rawDamage = (attackPower - defense) * critMultiplier
+  const damage = Math.max(0, Math.round(rawDamage))
   const remainingHp = Math.max(0, defender.status.hp - damage)
 
   return {
@@ -85,6 +91,8 @@ const calcNormalAttack = (attacker: Combatant, defender: Combatant, roll = Math.
     defenderRemainingHp: remainingHp,
     attackerHitRate: hitRate,
     attackerCritRate: criticalRate,
+    attackRoll,
+    defenseRoll,
   }
 }
 
@@ -117,8 +125,8 @@ function App() {
 
   const quickView = useMemo(() => {
     return {
-      aPdef: physicalDefense(a.status.vit).toFixed(1),
-      bPdef: physicalDefense(b.status.vit).toFixed(1),
+      aPdefMinMax: `${physicalDefense(a.status.vit, 0.5).toFixed(1)} ~ ${physicalDefense(a.status.vit, 1.0).toFixed(1)}`,
+      bPdefMinMax: `${physicalDefense(b.status.vit, 0.5).toFixed(1)} ~ ${physicalDefense(b.status.vit, 1.0).toFixed(1)}`,
       hitAB: (calcHitRate(a.status, b.status) * 100).toFixed(1),
       hitBA: (calcHitRate(b.status, a.status) * 100).toFixed(1),
     }
@@ -142,7 +150,10 @@ function App() {
       : `${a.name} → ${b.name}: ミス`
 
     setLog(
-      `${line}\n命中率: ${(result.attackerHitRate * 100).toFixed(1)}% / クリ率: ${(result.attackerCritRate * 100).toFixed(1)}%`,
+      `${line}\n命中率: ${(result.attackerHitRate * 100).toFixed(1)}% / クリ率: ${(result.attackerCritRate * 100).toFixed(1)}%\n` +
+        (result.hit
+          ? `攻撃乱数: x${result.attackRoll.toFixed(3)} (物理 1.00~0.66) / 防御乱数: x${result.defenseRoll.toFixed(3)} (物防 1.00~0.50)`
+          : ''),
     )
   }
 
@@ -155,16 +166,8 @@ function App() {
         {[{ key: 'a', data: a }, { key: 'b', data: b }].map((entry) => (
           <article key={entry.key} className="panel">
             <h2>{entry.data.name}</h2>
-            <StatInput
-              label="HP"
-              value={entry.data.status.hp}
-              onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'hp', v)}
-            />
-            <StatInput
-              label="MP"
-              value={entry.data.status.mp}
-              onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'mp', v)}
-            />
+            <StatInput label="HP" value={entry.data.status.hp} onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'hp', v)} />
+            <StatInput label="MP" value={entry.data.status.mp} onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'mp', v)} />
             <StatInput label="STR" value={entry.data.status.str} onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'str', v)} />
             <StatInput label="DEX" value={entry.data.status.dex} onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'dex', v)} />
             <StatInput label="AGI" value={entry.data.status.agi} onChange={(v) => updateStatus(entry.key as 'a' | 'b', 'agi', v)} />
@@ -176,11 +179,13 @@ function App() {
       </section>
 
       <section className="panel metrics">
-        <p>A物防: {quickView.aPdef} / B物防: {quickView.bPdef}</p>
+        <p>A物防レンジ: {quickView.aPdefMinMax} / B物防レンジ: {quickView.bPdefMinMax}</p>
         <p>A→B 命中率: {quickView.hitAB}% / B→A 命中率: {quickView.hitBA}%</p>
       </section>
 
-      <button onClick={runOneAttack} type="button">AがBを通常攻撃</button>
+      <button onClick={runOneAttack} type="button">
+        AがBを通常攻撃
+      </button>
 
       <pre className="panel log">{log}</pre>
     </main>

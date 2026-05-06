@@ -159,6 +159,7 @@ function App() {
     <h1>あるけみバトルシミュレーター</h1>
     <section className="panel">
       <h2>装備 (最大7枠)</h2>
+      <p className="notice">装備戦闘力は正確でない場合があります。特に宝珠は少しズレるためご注意ください。</p>
       {equipped.map((slot, i) => {
         const items = slot.category === 'orb'
           ? EQUIPMENT_MASTER.filter((x) => x.category !== 'orb')

@@ -78,3 +78,14 @@ button {
   color: #cbd5e1;
   white-space: nowrap;
 }
+
+
+.app, .panel, h1, h2, p, strong, label, .slot-power {
+  color: #e2e8f0;
+}
+
+.notice {
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}

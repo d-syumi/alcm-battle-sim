@@ -58,10 +58,12 @@ const calcEquipmentBonus = (equipped: EquippedItem[]) => {
   for (const eq of equipped) {
     const item = EQUIPMENT_MASTER.find((x) => x.id === eq.itemId)
     if (!item) continue
-    const inherentTp = calcInherentTotalPower(item.baseTotalPower, eq.plus)
+    const totalPower = calcInherentTotalPower(item.baseTotalPower, eq.plus)
+    const shared = calcCommonBonusPerStat(eq.plus)
+    const commonPower = shared * STACKABLE_STATS.length
+    const inherentTp = Math.max(0, totalPower - commonPower)
     inherent = addStatus(inherent, calcInherentStats(inherentTp, item.statRatios))
 
-    const shared = calcCommonBonusPerStat(eq.plus)
     for (const key of STACKABLE_STATS) common[key] += shared
   }
 
@@ -148,7 +150,7 @@ function App() {
           <select value={slot.itemId} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, itemId: e.target.value } : p))}>
             {items.map((item) => <option key={item.id} value={item.id}>{item.name} [{item.rank}] TP{item.baseTotalPower}</option>)}
           </select>
-          <input type="number" min={0} max={15} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Number(e.target.value)) } : p))} />
+          <label>+<input type="number" min={0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Math.floor(Number(e.target.value))) } : p))} /></label>
         </div>
       })}
       <p>固有値合計: STR {equipmentBonus.inherent.str} / AGI {equipmentBonus.inherent.agi} / VIT {equipmentBonus.inherent.vit} ...</p>

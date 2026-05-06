@@ -20,11 +20,38 @@ export const EQUIPMENT_SLOT_LIMIT: Record<EquipmentCategory, number> = {
   accessory: 2,
 }
 
-// 実測に合わせた暫定式: +4時にこんぼう(11)が約141になるよう調整
-const PLUS_TOTAL_POWER_PER_LEVEL = 3
+// 実測テーブル(+値込み戦闘力)。値は共通値を含んだ総戦闘力。
+const TOTAL_POWER_TABLE_BY_BASE: Record<number, number[]> = {
+  11: [11, 24, 44, 79, 141, 254, 470, 888, 1703, 3308, 6481, 12774],
+  18: [18, 42, 74, 123, 204, 342, 591, 1056, 1938, 3639, 6954, 13455],
+  28: [28, 67, 117, 187, 294, 467, 765, 1296, 2275, 4114],
+  36: [36, 86, 150, 238, 366, 568, 904, 1490, 2542, 4494],
+  46: [46, 112, 194, 302, 457, 694, 1078, 1730, 2880, 4968, 8848],
+  56: [56, 137, 235, 365, 547, 818, 1252, 1969, 3215, 5440],
+  86: [86, 212, 364, 557, 820, 1197, 1773, 2693, 4223, 6865],
+}
 
 export const calcInherentTotalPower = (baseTotalPower: number, plus: number) => {
-  return Math.round(baseTotalPower * (1 + PLUS_TOTAL_POWER_PER_LEVEL * Math.max(0, plus)))
+  const safePlus = Math.max(0, Math.floor(plus))
+  const table = TOTAL_POWER_TABLE_BY_BASE[baseTotalPower]
+
+  if (table && safePlus < table.length) return table[safePlus]
+
+  if (table && table.length >= 2) {
+    // テーブル外は末尾2点の比率で外挿
+    const last = table[table.length - 1]
+    const prev = table[table.length - 2]
+    const growth = last / Math.max(prev, 1)
+    return Math.round(last * growth ** (safePlus - (table.length - 1)))
+  }
+
+  // 未定義baseは近傍baseの倍率で補間
+  const nearestBase = Object.keys(TOTAL_POWER_TABLE_BY_BASE)
+    .map(Number)
+    .sort((a, b) => Math.abs(a - baseTotalPower) - Math.abs(b - baseTotalPower))[0]
+  const nearestTable = TOTAL_POWER_TABLE_BY_BASE[nearestBase]
+  const ref = safePlus < nearestTable.length ? nearestTable[safePlus] : nearestTable[nearestTable.length - 1]
+  return Math.round((baseTotalPower / nearestBase) * ref)
 }
 
 export const calcCommonBonusPerStat = (plus: number) => 2 ** plus

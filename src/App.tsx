@@ -24,6 +24,7 @@ type AttackResult = {
   defenderRemainingHp: number
   attackerHitRate: number
   attackerCritRate: number
+  criticalCap: number
   attackRoll: number
   defenseRoll: number
 }
@@ -41,6 +42,8 @@ const DEFAULT_B: Combatant = {
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 const rollRange = (roll: () => number, min: number, max: number) => min + roll() * (max - min)
 
+const DEFAULT_CRITICAL_CAP = 0.5
+
 const physicalDefense = (vit: number, defenseRoll = 1) => vit * defenseRoll
 
 const calcHitRate = (attacker: Status, defender: Status) => {
@@ -51,15 +54,23 @@ const calcHitRate = (attacker: Status, defender: Status) => {
   return clamp(base + dexTerm + luckTerm - vitTerm, 0.1, 0.98)
 }
 
-const calcCriticalRate = (attacker: Status, defender: Status) => {
-  const base = 0.05
-  const luckTerm = (attacker.luk - defender.luk) * 0.0015
-  return clamp(base + luckTerm, 0.01, 0.35)
+const calcCriticalRate = (
+  attacker: Status,
+  defender: Status,
+  criticalCap = DEFAULT_CRITICAL_CAP,
+) => {
+  const base = 0.07
+  const defenderLuk = Math.max(defender.luk, 1)
+  const lukRatio = attacker.luk / defenderLuk
+
+  // lukRatio=1 -> 7%, lukRatio=50 -> 100%
+  const uncappedRate = base + (lukRatio - 1) * (0.93 / 49)
+  return clamp(uncappedRate, 0.01, criticalCap)
 }
 
 const calcNormalAttack = (attacker: Combatant, defender: Combatant, roll = Math.random): AttackResult => {
   const hitRate = calcHitRate(attacker.status, defender.status)
-  const criticalRate = calcCriticalRate(attacker.status, defender.status)
+  const criticalRate = calcCriticalRate(attacker.status, defender.status, DEFAULT_CRITICAL_CAP)
 
   if (roll() > hitRate) {
     return {
@@ -69,6 +80,7 @@ const calcNormalAttack = (attacker: Combatant, defender: Combatant, roll = Math.
       defenderRemainingHp: defender.status.hp,
       attackerHitRate: hitRate,
       attackerCritRate: criticalRate,
+      criticalCap: DEFAULT_CRITICAL_CAP,
       attackRoll: 0,
       defenseRoll: 0,
     }
@@ -91,6 +103,7 @@ const calcNormalAttack = (attacker: Combatant, defender: Combatant, roll = Math.
     defenderRemainingHp: remainingHp,
     attackerHitRate: hitRate,
     attackerCritRate: criticalRate,
+    criticalCap: DEFAULT_CRITICAL_CAP,
     attackRoll,
     defenseRoll,
   }
@@ -150,7 +163,7 @@ function App() {
       : `${a.name} → ${b.name}: ミス`
 
     setLog(
-      `${line}\n命中率: ${(result.attackerHitRate * 100).toFixed(1)}% / クリ率: ${(result.attackerCritRate * 100).toFixed(1)}%\n` +
+      `${line}\n命中率: ${(result.attackerHitRate * 100).toFixed(1)}% / クリ率: ${(result.attackerCritRate * 100).toFixed(1)}% (上限 ${(result.criticalCap * 100).toFixed(0)}%)\n` +
         (result.hit
           ? `攻撃乱数: x${result.attackRoll.toFixed(3)} (物理 1.00~0.66) / 防御乱数: x${result.defenseRoll.toFixed(3)} (物防 1.00~0.50)`
           : ''),

@@ -131,6 +131,16 @@ const calcNormalAttack = (attacker: Combatant, defender: Combatant, roll = Math.
   return { hit: true, critical: crit, damage, defenderRemainingHp: Math.max(0, defender.status.hp - damage), attackerHitRate: hitRate, attackerCritRate: criticalRate, criticalCap: DEFAULT_CRITICAL_CAP, attackRoll, defenseRoll }
 }
 
+
+const formatNonZeroStatus = (status: Status, withPlus = false) => {
+  const order: (keyof Status)[] = ['hp', 'mp', 'str', 'dex', 'agi', 'int', 'vit', 'luk']
+  const labels: Record<keyof Status, string> = { hp: 'HP', mp: 'MP', str: 'STR', dex: 'DEX', agi: 'AGI', int: 'INT', vit: 'VIT', luk: 'LUK' }
+  const items = order
+    .filter((key) => status[key] !== 0)
+    .map((key) => `${labels[key]} ${withPlus ? '+' : ''}${status[key]}`)
+  return items.length > 0 ? items.join(' / ') : 'なし'
+}
+
 function App() {
   const [a, setA] = useState<Combatant>(DEFAULT_A)
   const [b] = useState<Combatant>(DEFAULT_B)
@@ -176,8 +186,8 @@ function App() {
           <span className="slot-power">+{slot.plus} 戦闘力{slotPower}</span>
         </div>
       })}
-      <p>固有値合計: HP {equipmentBonus.inherent.hp} / MP {equipmentBonus.inherent.mp} / STR {equipmentBonus.inherent.str} / DEX {equipmentBonus.inherent.dex} / AGI {equipmentBonus.inherent.agi} / INT {equipmentBonus.inherent.int} / VIT {equipmentBonus.inherent.vit} / LUK {equipmentBonus.inherent.luk}</p>
-      <p>共通値合計: STR+{equipmentBonus.common.str} DEX+{equipmentBonus.common.dex} AGI+{equipmentBonus.common.agi} INT+{equipmentBonus.common.int} VIT+{equipmentBonus.common.vit} LUK+{equipmentBonus.common.luk}</p>
+      <p>固有値合計: {formatNonZeroStatus(equipmentBonus.inherent)}</p>
+      <p>共通値合計: {formatNonZeroStatus(equipmentBonus.common, true)}</p>
     </section>
     <section className="panel">
       {(['hp','mp','str','dex','agi','int','vit','luk'] as (keyof Status)[]).map((k)=><label key={k}>{k.toUpperCase()}<input type="number" value={a.status[k]} min={0} onChange={(e)=>updateStatus(k, Number(e.target.value))} /></label>)}

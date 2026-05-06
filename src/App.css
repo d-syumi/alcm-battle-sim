@@ -56,7 +56,7 @@ button {
 
 .equip-row {
   display: grid;
-  grid-template-columns: 110px 1fr auto auto;
+  grid-template-columns: 110px minmax(260px, 1fr) 70px 150px;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
@@ -77,6 +77,9 @@ button {
   font-size: 0.9rem;
   color: #cbd5e1;
   white-space: nowrap;
+  width: 150px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 

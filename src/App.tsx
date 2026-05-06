@@ -183,7 +183,7 @@ function App() {
             {items.map((item) => <option key={item.id} value={item.id}>[{item.rank}] {item.name}</option>)}
           </select>
           <label className="plus-field">+<input type="number" min={slot.category === 'orb' ? 4 : 0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(slot.category === 'orb' ? 4 : 0, Math.floor(Number(e.target.value))) } : p))} /></label>
-          <span className="slot-power">+{slot.plus} 戦闘力{slotPower}</span>
+          <span className="slot-power">戦闘力{slotPower}</span>
         </div>
       })}
       <p>固有値合計: {formatNonZeroStatus(equipmentBonus.inherent)}</p>

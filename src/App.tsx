@@ -27,7 +27,7 @@ type AttackResult = {
   defenseRoll: number
 }
 
-type EquippedItem = { slotId: string; itemId: string; plus: number }
+type EquippedItem = { slotId: string; category: EquipmentCategory; itemId: string; plus: number }
 
 const DEFAULT_A: Combatant = {
   name: 'プレイヤーA',
@@ -78,7 +78,7 @@ const buildInitialEquipment = (): EquippedItem[] => {
     const candidate = EQUIPMENT_MASTER.find((item) => item.category === category)
     const limit = EQUIPMENT_SLOT_LIMIT[category]
     for (let i = 0; i < limit; i += 1) {
-      if (candidate) result.push({ slotId: `${category}-${i + 1}`, itemId: candidate.id, plus: 0 })
+      if (candidate) result.push({ slotId: `${category}-${i + 1}`, category, itemId: candidate.id, plus: 0 })
     }
   }
   return result
@@ -143,11 +143,11 @@ function App() {
     <section className="panel">
       <h2>装備 (最大7枠)</h2>
       {equipped.map((slot, i) => {
-        const selected = EQUIPMENT_MASTER.find((x) => x.id === slot.itemId)
-        const items = EQUIPMENT_MASTER.filter((x) => x.category === selected?.category)
+        const items = EQUIPMENT_MASTER.filter((x) => x.category === slot.category)
         return <div key={slot.slotId}>
           <strong>{slot.slotId}</strong>
           <select value={slot.itemId} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, itemId: e.target.value } : p))}>
+            <option value="">装備なし</option>
             {items.map((item) => <option key={item.id} value={item.id}>{item.name} [{item.rank}] TP{item.baseTotalPower}</option>)}
           </select>
           <label>+<input type="number" min={0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Math.floor(Number(e.target.value))) } : p))} /></label>

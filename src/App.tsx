@@ -84,6 +84,18 @@ const buildInitialEquipment = (): EquippedItem[] => {
   return result
 }
 
+
+const slotLabel = (slot: EquippedItem) => {
+  if (slot.slotId === 'weapon-1') return '武器1'
+  if (slot.slotId === 'weapon-2') return '武器2'
+  if (slot.slotId === 'head-1') return '頭具'
+  if (slot.slotId === 'armor-1') return '防具'
+  if (slot.slotId === 'boots-1') return '足具'
+  if (slot.slotId === 'accessory-1') return 'アクセサリー1'
+  if (slot.slotId === 'accessory-2') return 'アクセサリー2'
+  return slot.slotId
+}
+
 const calcHitRate = (attacker: Status, defender: Status) => {
   const base = 0.83
   const dexTerm = (attacker.dex - defender.agi * 0.65) * 0.0028
@@ -147,10 +159,10 @@ function App() {
         const selected = EQUIPMENT_MASTER.find((x) => x.id === slot.itemId)
         const slotPower = selected ? calcInherentTotalPower(selected.baseTotalPower, slot.plus) : 0
         return <div key={slot.slotId} className="equip-row">
-          <strong>{slot.slotId}</strong>
+          <strong>{slotLabel(slot)}</strong>
           <select value={slot.itemId} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, itemId: e.target.value } : p))}>
             <option value="">装備なし</option>
-            {items.map((item) => <option key={item.id} value={item.id}>{item.name} [{item.rank}] TP{item.baseTotalPower}</option>)}
+            {items.map((item) => <option key={item.id} value={item.id}>[{item.rank}] {item.name}</option>)}
           </select>
           <label className="plus-field">+<input type="number" min={0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Math.floor(Number(e.target.value))) } : p))} /></label>
           <span className="slot-power">+{slot.plus} 戦闘力{slotPower}</span>

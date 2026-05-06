@@ -20,10 +20,11 @@ export const EQUIPMENT_SLOT_LIMIT: Record<EquipmentCategory, number> = {
   accessory: 2,
 }
 
-const PLUS_INHERENT_SCALE = 0.76
+// 実測に合わせた暫定式: +4時にこんぼう(11)が約141になるよう調整
+const PLUS_TOTAL_POWER_PER_LEVEL = 3
 
 export const calcInherentTotalPower = (baseTotalPower: number, plus: number) => {
-  return Math.round(baseTotalPower * (1 + PLUS_INHERENT_SCALE * plus) ** plus)
+  return Math.round(baseTotalPower * (1 + PLUS_TOTAL_POWER_PER_LEVEL * Math.max(0, plus)))
 }
 
 export const calcCommonBonusPerStat = (plus: number) => 2 ** plus

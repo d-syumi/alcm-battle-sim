@@ -23,6 +23,7 @@ export const EQUIPMENT_SLOT_LIMIT: Record<EquipmentCategory, number> = {
 // 実測テーブル(+値込み戦闘力)。値は共通値を含んだ総戦闘力。
 const TOTAL_POWER_TABLE_BY_BASE: Record<number, number[]> = {
   11: [11, 24, 44, 79, 141, 254, 470, 888, 1703, 3308, 6481, 12774],
+  13: [13, 29, 53, 92, 159, 280, 505, 936, 1771, 3404, 6617, 12970, 25568],
   18: [18, 42, 74, 123, 204, 342, 591, 1056, 1938, 3639, 6954, 13455],
   28: [28, 67, 117, 187, 294, 467, 765, 1296, 2275, 4114],
   36: [36, 86, 150, 238, 366, 568, 904, 1490, 2542, 4494],
@@ -106,8 +107,8 @@ export const EQUIPMENT_MASTER: EquipmentMaster[] = [
   // weapon
   create('weapon', 'こんぼう', 'F', 11,{ str: 100 }),
   create('weapon', 'アイアンブレード', 'F', 11,{ str: 40, dex: 60 }),
-  create('weapon', 'ウッドハンマー', 'F', 11,{ str: 100 }),
-  create('weapon', 'アイアンバックラー', 'F', 11,{ vit: 100 }),
+  create('weapon', 'ウッドハンマー', 'F', 13,{ str: 100 }),
+  create('weapon', 'アイアンバックラー', 'F', 13,{ vit: 100 }),
   create('weapon', 'ブロンズスピア', 'E', 18,{ str: 83.3, agi: 16.7 }),
   create('weapon', 'シルバーダガー', 'E', 19,{ str: 23.1, agi: 76.9 }),
   create('weapon', 'アイアンモーニングスター', 'E', 18,{ str: 50, luk: 50 }),

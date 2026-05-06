@@ -132,11 +132,11 @@ export const EQUIPMENT_MASTER: EquipmentMaster[] = [
   create('weapon', '聖者の杖', 'A', 56,{ agi: 20, int: 70, vit: 10 }),
   create('weapon', 'アヴァロンの盾', 'A', 56,{ agi: 10, int: 20, vit: 70 }),
   create('weapon', 'クリムゾンバレット', 'A', 56,{ str: 6.25, dex: 56.25, agi: 6.25, int: 6.25, vit: 6.25, luk: 18.75 }),
-  create('weapon', '絶対零撃', 'S', 86,{ str: 50, dex: 18.75, agi: 18.75, vit: 6.25, luk: 6.25 }),
+  create('weapon', '絶対零弩', 'S', 86,{ str: 50, dex: 18.75, agi: 18.75, vit: 6.25, luk: 6.25 }),
   create('weapon', '夢幻水晶', 'S', 86,{ dex: 12.5, agi: 18.75, int: 56.25, vit: 6.25, luk: 6.25 }),
   create('weapon', 'ヴァルキリーシールド', 'S', 86,{ dex: 6.25, agi: 12.5, int: 18.75, vit: 56.25, luk: 6.25 }),
-  create('weapon', '引鉄葬', 'S', 86,{ str: 55, dex: 5, vit: 20, luk: 20 }),
-  create('weapon', '聖槍ロンギヌヌス', 'S', 86,{ str: 20, dex: 55, agi: 15, vit: 5, luk: 5 }),
+  create('weapon', '引鉄斧', 'S', 86,{ str: 55, dex: 5, vit: 20, luk: 20 }),
+  create('weapon', '聖槍ロンギヌス', 'S', 86,{ str: 20, dex: 55, agi: 15, vit: 5, luk: 5 }),
   create('weapon', '獄竜剣', 'S', 86,{ str: 30, dex: 25, agi: 40, vit: 5 }),
 
   // head
@@ -147,7 +147,7 @@ export const EQUIPMENT_MASTER: EquipmentMaster[] = [
   create('head', 'ドラゴンヘルム', 'D', 26,{ str: 30, dex: 25, agi: 5, vit: 40 }),
   create('head', 'ホワイトブリム', 'D', 26,{ dex: 27, agi: 27, int: 27, luk: 19 }),
   create('head', 'カウボーイハット', 'C', 36,{ dex: 40, agi: 40, int: 10, luk: 10 }),
-  create('head', '天使の兆輪', 'C', 36,{ int: 50, vit: 20, luk: 30 }),
+  create('head', '天使の光輪', 'C', 36,{ int: 50, vit: 20, luk: 30 }),
   create('head', '戦士のバンダナ', 'B', 46,{ str: 40, dex: 10, agi: 20, vit: 30 }),
   create('head', 'モコモコマフラー', 'B', 46,{ int: 35, vit: 35, luk: 30 }),
   create('head', 'アルケ・ゴーグル', 'A', 56,{ str: 15, dex: 40, agi: 15, int: 10, vit: 10, luk: 10 }),

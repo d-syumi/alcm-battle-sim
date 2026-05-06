@@ -58,8 +58,11 @@ const calcEquipmentBonus = (equipped: EquippedItem[]) => {
   for (const eq of equipped) {
     const item = EQUIPMENT_MASTER.find((x) => x.id === eq.itemId)
     if (!item) continue
-    const totalPower = calcInherentTotalPower(item.baseTotalPower, eq.plus)
-    const shared = calcCommonBonusPerStat(eq.plus)
+    if (eq.category === 'orb' && eq.plus < 4) continue
+
+    const scale = eq.category === 'orb' ? 0.3 : 1
+    const totalPower = Math.round(calcInherentTotalPower(item.baseTotalPower, eq.plus) * scale)
+    const shared = Math.round(calcCommonBonusPerStat(eq.plus) * scale)
     const commonPower = shared * STACKABLE_STATS.length
     const inherentTp = Math.max(0, totalPower - commonPower)
     inherent = addStatus(inherent, calcInherentStats(inherentTp, item.statRatios))
@@ -71,7 +74,7 @@ const calcEquipmentBonus = (equipped: EquippedItem[]) => {
 }
 
 const buildInitialEquipment = (): EquippedItem[] => {
-  const categories: EquipmentCategory[] = ['weapon', 'head', 'armor', 'boots', 'accessory']
+  const categories: EquipmentCategory[] = ['weapon', 'head', 'armor', 'boots', 'accessory', 'orb']
   const result: EquippedItem[] = []
 
   for (const category of categories) {
@@ -92,6 +95,9 @@ const slotLabel = (slot: EquippedItem) => {
   if (slot.slotId === 'boots-1') return '足具'
   if (slot.slotId === 'accessory-1') return 'アクセサリー1'
   if (slot.slotId === 'accessory-2') return 'アクセサリー2'
+  if (slot.slotId === 'orb-1') return '宝珠1'
+  if (slot.slotId === 'orb-2') return '宝珠2'
+  if (slot.slotId === 'orb-3') return '宝珠3'
   return slot.slotId
 }
 
@@ -154,16 +160,18 @@ function App() {
     <section className="panel">
       <h2>装備 (最大7枠)</h2>
       {equipped.map((slot, i) => {
-        const items = EQUIPMENT_MASTER.filter((x) => x.category === slot.category)
+        const items = slot.category === 'orb'
+          ? EQUIPMENT_MASTER.filter((x) => x.category !== 'orb')
+          : EQUIPMENT_MASTER.filter((x) => x.category === slot.category)
         const selected = EQUIPMENT_MASTER.find((x) => x.id === slot.itemId)
-        const slotPower = selected ? calcInherentTotalPower(selected.baseTotalPower, slot.plus) : 0
+        const slotPower = selected ? Math.round(calcInherentTotalPower(selected.baseTotalPower, slot.plus) * (slot.category === 'orb' ? 0.3 : 1)) : 0
         return <div key={slot.slotId} className="equip-row">
           <strong>{slotLabel(slot)}</strong>
           <select value={slot.itemId} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, itemId: e.target.value } : p))}>
             <option value="">装備なし</option>
             {items.map((item) => <option key={item.id} value={item.id}>[{item.rank}] {item.name}</option>)}
           </select>
-          <label className="plus-field">+<input type="number" min={0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Math.floor(Number(e.target.value))) } : p))} /></label>
+          <label className="plus-field">+<input type="number" min={slot.category === 'orb' ? 4 : 0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(slot.category === 'orb' ? 4 : 0, Math.floor(Number(e.target.value))) } : p))} /></label>
           <span className="slot-power">+{slot.plus} 戦闘力{slotPower}</span>
         </div>
       })}

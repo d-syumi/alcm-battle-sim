@@ -1,6 +1,6 @@
 import type { Status } from './types'
 
-export type EquipmentCategory = 'weapon' | 'head' | 'armor' | 'boots' | 'accessory'
+export type EquipmentCategory = 'weapon' | 'head' | 'armor' | 'boots' | 'accessory' | 'orb'
 export type EquipmentRank = 'F' | 'E' | 'D' | 'C' | 'B' | 'A' | 'S'
 
 export type EquipmentMaster = {
@@ -18,6 +18,7 @@ export const EQUIPMENT_SLOT_LIMIT: Record<EquipmentCategory, number> = {
   armor: 1,
   boots: 1,
   accessory: 2,
+  orb: 3,
 }
 
 // 実測テーブル(+値込み戦闘力)。値は共通値を含んだ総戦闘力。

@@ -144,16 +144,19 @@ function App() {
       <h2>装備 (最大7枠)</h2>
       {equipped.map((slot, i) => {
         const items = EQUIPMENT_MASTER.filter((x) => x.category === slot.category)
-        return <div key={slot.slotId}>
+        const selected = EQUIPMENT_MASTER.find((x) => x.id === slot.itemId)
+        const slotPower = selected ? calcInherentTotalPower(selected.baseTotalPower, slot.plus) : 0
+        return <div key={slot.slotId} className="equip-row">
           <strong>{slot.slotId}</strong>
           <select value={slot.itemId} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, itemId: e.target.value } : p))}>
             <option value="">装備なし</option>
             {items.map((item) => <option key={item.id} value={item.id}>{item.name} [{item.rank}] TP{item.baseTotalPower}</option>)}
           </select>
-          <label>+<input type="number" min={0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Math.floor(Number(e.target.value))) } : p))} /></label>
+          <label className="plus-field">+<input type="number" min={0} max={15} step={1} value={slot.plus} onChange={(e) => setEquipped((prev) => prev.map((p, idx) => idx === i ? { ...p, plus: Math.max(0, Math.floor(Number(e.target.value))) } : p))} /></label>
+          <span className="slot-power">+{slot.plus} 戦闘力{slotPower}</span>
         </div>
       })}
-      <p>固有値合計: STR {equipmentBonus.inherent.str} / AGI {equipmentBonus.inherent.agi} / VIT {equipmentBonus.inherent.vit} ...</p>
+      <p>固有値合計: HP {equipmentBonus.inherent.hp} / MP {equipmentBonus.inherent.mp} / STR {equipmentBonus.inherent.str} / DEX {equipmentBonus.inherent.dex} / AGI {equipmentBonus.inherent.agi} / INT {equipmentBonus.inherent.int} / VIT {equipmentBonus.inherent.vit} / LUK {equipmentBonus.inherent.luk}</p>
       <p>共通値合計: STR+{equipmentBonus.common.str} DEX+{equipmentBonus.common.dex} AGI+{equipmentBonus.common.agi} INT+{equipmentBonus.common.int} VIT+{equipmentBonus.common.vit} LUK+{equipmentBonus.common.luk}</p>
     </section>
     <section className="panel">

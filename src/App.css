@@ -53,3 +53,28 @@ button {
 .log {
   margin-top: 12px;
 }
+
+.equip-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.plus-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 0;
+}
+
+.plus-field input {
+  width: 3.2em;
+}
+
+.slot-power {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  white-space: nowrap;
+}

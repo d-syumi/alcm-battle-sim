@@ -75,10 +75,9 @@ const buildInitialEquipment = (): EquippedItem[] => {
   const result: EquippedItem[] = []
 
   for (const category of categories) {
-    const candidate = EQUIPMENT_MASTER.find((item) => item.category === category)
     const limit = EQUIPMENT_SLOT_LIMIT[category]
     for (let i = 0; i < limit; i += 1) {
-      if (candidate) result.push({ slotId: `${category}-${i + 1}`, category, itemId: candidate.id, plus: 0 })
+      result.push({ slotId: `${category}-${i + 1}`, category, itemId: '', plus: 0 })
     }
   }
   return result

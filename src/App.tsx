@@ -188,6 +188,7 @@ function App() {
       })}
       <p>固有値合計: {formatNonZeroStatus(equipmentBonus.inherent)}</p>
       <p>共通値合計: {formatNonZeroStatus(equipmentBonus.common, true)}</p>
+      <p>総上昇量: {formatNonZeroStatus(equipmentBonus.total, true)}</p>
     </section>
     <section className="panel">
       {(['hp','mp','str','dex','agi','int','vit','luk'] as (keyof Status)[]).map((k)=><label key={k}>{k.toUpperCase()}<input type="number" value={a.status[k]} min={0} onChange={(e)=>updateStatus(k, Number(e.target.value))} /></label>)}
